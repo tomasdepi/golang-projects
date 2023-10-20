@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/tomasdepi/golang-project/modules/cryptic/decrypt"
-	"github.com/tomasdepi/golang-project/modules/cryptic/encrypt"
+	"github.com/tomasdepi/golang-projects/modules/cryptic/decrypt"
+	"github.com/tomasdepi/golang-projects/modules/cryptic/encrypt"
 )
 
 func main() {
