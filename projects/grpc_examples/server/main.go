@@ -1,0 +1,46 @@
+package main
+
+import (
+	"log"
+	"net"
+
+	calc "github.com/tomasdepi/golang/projects/grpc_examples/pb/calculator"
+	pb "github.com/tomasdepi/golang/projects/grpc_examples/pb/greet"
+	"google.golang.org/grpc"
+)
+
+var addr string = "0.0.0.0:50001"
+
+type MyGreetServiceServer struct {
+	pb.GreetServiceServer
+}
+
+type MyCalculatorServiceServer struct {
+	calc.CalculatorServiceServer
+}
+
+func main() {
+
+	listener, err := net.Listen("tcp", addr)
+
+	if err != nil {
+		log.Fatalf("Unable to Listen %s\n", err)
+	}
+
+	log.Printf("Listening at %s\n", addr)
+
+	s := grpc.NewServer()
+
+	greetService := &MyGreetServiceServer{}
+	calcService := &MyCalculatorServiceServer{}
+
+	pb.RegisterGreetServiceServer(s, greetService)
+	calc.RegisterCalculatorServiceServer(s, calcService)
+
+	err = s.Serve(listener)
+
+	if err != nil {
+		log.Fatalf("Unable to Serve %s\n", err)
+	}
+
+}

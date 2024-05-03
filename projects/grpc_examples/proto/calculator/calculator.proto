@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package calculator;
+
+option go_package = "github.com/tomasdepi/golang/projects/grpc_examples/proto/calculator";
+
+message SumRequest{
+    int64 a = 1;
+    int64 b = 2;
+}
+
+message SumResponse{
+    int64 result = 1;
+}
+
+message MulRequest{
+    int64 a = 1;
+    int64 b = 2;
+}
+
+message MulResponse{
+    int64 result = 1;
+}
+
+message PrimeRequest{
+    int64 number = 1;
+}
+
+message PrimeResponse {
+    int64 prime = 1;
+}
+
+service CalculatorService {
+  rpc Sum(SumRequest) returns (SumResponse);
+  rpc Mul(MulRequest) returns (MulResponse);
+  rpc Prime(PrimeRequest) returns (stream PrimeResponse);
+}
