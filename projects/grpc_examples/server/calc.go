@@ -83,3 +83,36 @@ func (c *MyCalculatorServiceServer) Avg(stream calc.CalculatorService_AvgServer)
 
 	return nil
 }
+
+func (s *MyCalculatorServiceServer) Max(stream calc.CalculatorService_MaxServer) error {
+	log.Printf("Max function was invoked\n")
+
+	var max uint64 = 0
+
+	for {
+		msg, err := stream.Recv()
+
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			log.Fatalf("Error while reading stream %s\n", err)
+		}
+
+		if msg.Number > max {
+			max = msg.Number
+
+			err = stream.Send(&calc.MaxResponse{
+				Response: max,
+			})
+
+			if err != nil {
+				log.Fatalf("Error while sending response %s\n", err)
+			}
+		}
+
+	}
+
+	return nil
+}

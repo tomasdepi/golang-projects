@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"log"
+	"time"
 
 	pb "github.com/tomasdepi/golang/projects/grpc_examples/pb/greet"
 )
@@ -72,4 +73,47 @@ func doLongGreet(gsc pb.GreetServiceClient, names []string) {
 	}
 
 	log.Printf("Long Greet: %s\n", response.Result)
+}
+
+func doGreetEveryone(gsc pb.GreetServiceClient, names []string) {
+	log.Println("doGreetEveryone was invoked")
+
+	stream, err := gsc.GreetEveryone(context.Background())
+
+	if err != nil {
+		log.Fatalf("Error calling GreetEveryone %s\n", err)
+	}
+
+	waitc := make(chan []string)
+
+	go func() {
+		for _, name := range names {
+			stream.Send(&pb.GreetRequest{
+				Name: name,
+			})
+			time.Sleep(1 * time.Second)
+		}
+		stream.CloseSend()
+	}()
+
+	go func() {
+		for {
+			res, err := stream.Recv()
+
+			if err == io.EOF {
+				break
+			}
+
+			if err != nil {
+				log.Fatalf("Error while reading stream %s\n", err)
+				break
+			}
+
+			log.Printf("Received: %s\n", res.Result)
+		}
+
+		close(waitc)
+	}()
+
+	<-waitc
 }

@@ -34,7 +34,11 @@ func main() {
 
 	doPrime(clientcalc, 120) // Streaming Server call
 
-	doLongGreet(clientgreet, []string{"Okarin", "Calabacita", "Flaco"})
+	doLongGreet(clientgreet, []string{"Okarin", "Calabacita", "Flaco"}) // Client Server call
 
-	doAvg(clientcalc, []uint64{1, 2, 3, 4})
+	doAvg(clientcalc, []uint64{1, 2, 3, 4}) // Client Server call
+
+	doGreetEveryone(clientgreet, []string{"Okarin", "Calabacita", "Flaco"})
+
+	doMax(clientcalc, []uint64{1, 5, 3, 6, 2, 20})
 }

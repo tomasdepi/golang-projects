@@ -38,9 +38,18 @@ message AvgResponse {
     double response = 1;
 }
 
+message MaxRequest {
+    uint64 number = 1;
+}
+
+message MaxResponse {
+    uint64 response = 1;
+}
+
 service CalculatorService {
   rpc Sum(SumRequest) returns (SumResponse);
   rpc Mul(MulRequest) returns (MulResponse);
   rpc Prime(PrimeRequest) returns (stream PrimeResponse);
   rpc Avg(stream AvgRequest) returns (AvgResponse);
+  rpc Max(stream MaxRequest) returns (stream MaxResponse);
 }

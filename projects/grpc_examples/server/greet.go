@@ -54,3 +54,31 @@ func (s *MyGreetServiceServer) LongGreet(stream pb.GreetService_LongGreetServer)
 
 	return nil
 }
+
+func (s *MyGreetServiceServer) GreetEveryone(stream pb.GreetService_GreetEveryoneServer) error {
+	log.Printf("GreetEveryone function was invoked\n")
+
+	for {
+		msg, err := stream.Recv()
+
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			log.Fatalf("Error while reading stream %s\n", err)
+		}
+
+		res := msg.Name
+
+		err = stream.Send(&pb.GreetResponse{
+			Result: res,
+		})
+
+		if err != nil {
+			log.Fatalf("Error while sending response %s\n", err)
+		}
+	}
+
+	return nil
+}
