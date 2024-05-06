@@ -32,5 +32,9 @@ func main() {
 
 	doGreetManyTimes(clientgreet) // Streaming Server call
 
-	doPrime(clientcalc, 120)
+	doPrime(clientcalc, 120) // Streaming Server call
+
+	doLongGreet(clientgreet, []string{"Okarin", "Calabacita", "Flaco"})
+
+	doAvg(clientcalc, []uint64{1, 2, 3, 4})
 }

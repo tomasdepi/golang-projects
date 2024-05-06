@@ -49,3 +49,27 @@ func doGreetManyTimes(gsc pb.GreetServiceClient) {
 	}
 
 }
+
+func doLongGreet(gsc pb.GreetServiceClient, names []string) {
+	log.Println("doLongGreet was invoked")
+
+	stream, err := gsc.LongGreet(context.Background())
+
+	if err != nil {
+		log.Fatalf("Error calling GreetManyTimes %s\n", err)
+	}
+
+	for _, value := range names {
+		stream.Send(&pb.GreetRequest{
+			Name: value,
+		})
+	}
+
+	response, err := stream.CloseAndRecv()
+
+	if err != nil {
+		log.Fatalf("Error while reading response %s\n", err)
+	}
+
+	log.Printf("Long Greet: %s\n", response.Result)
+}

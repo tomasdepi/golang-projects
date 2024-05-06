@@ -63,3 +63,27 @@ func doPrime(ssc calc.CalculatorServiceClient, number int64) {
 		log.Printf("We got the prime %d", msg.Prime)
 	}
 }
+
+func doAvg(ssc calc.CalculatorServiceClient, numbers []uint64) {
+	log.Println("doAvg was invoked")
+
+	stream, err := ssc.Avg(context.Background())
+
+	if err != nil {
+		log.Fatalf("Failed to Avg %s\n", err)
+	}
+
+	for _, n := range numbers {
+		stream.Send(&calc.AvgRequest{
+			Number: n,
+		})
+	}
+
+	res, err := stream.CloseAndRecv()
+
+	if err != nil {
+		log.Fatalf("Error while reading response from Avg %s\n", err)
+	}
+
+	log.Printf("We got the avg %f", res.Response)
+}
