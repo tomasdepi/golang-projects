@@ -41,4 +41,8 @@ func main() {
 	doGreetEveryone(clientgreet, []string{"Okarin", "Calabacita", "Flaco"})
 
 	doMax(clientcalc, []uint64{1, 5, 3, 6, 2, 20})
+
+	doSqrt(clientcalc, 10)
+
+	doSqrt(clientcalc, -10)
 }

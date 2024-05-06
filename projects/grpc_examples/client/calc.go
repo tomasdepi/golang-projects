@@ -7,6 +7,8 @@ import (
 	"time"
 
 	calc "github.com/tomasdepi/golang/projects/grpc_examples/pb/calculator"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func doSum(ssc calc.CalculatorServiceClient, a int64, b int64) int64 {
@@ -130,4 +132,29 @@ func doMax(ssc calc.CalculatorServiceClient, numbers []uint64) {
 	}()
 
 	<-waitc
+}
+
+func doSqrt(ssc calc.CalculatorServiceClient, number int64) {
+	log.Println("doSqrt was invoked")
+
+	res, err := ssc.Sqr(context.Background(), &calc.SqrRequest{
+		Number: number,
+	})
+
+	if err != nil {
+		e, ok := status.FromError(err)
+		if ok {
+			log.Printf("Error message from server %s\n", e.Message())
+			log.Printf("Error code from server %s\n", e.Code())
+
+			if e.Code() == codes.InvalidArgument {
+				log.Printf("Sent negative number\n")
+				return
+			}
+		} else {
+			log.Fatalf("A non gRPC Error %s\n", err)
+		}
+	}
+
+	log.Printf("Response Sqrt is: %f", res.Response)
 }

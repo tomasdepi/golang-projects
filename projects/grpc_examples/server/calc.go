@@ -2,10 +2,14 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log"
+	"math"
 
 	calc "github.com/tomasdepi/golang/projects/grpc_examples/pb/calculator"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func getPrimes(n int64) []int64 {
@@ -115,4 +119,19 @@ func (s *MyCalculatorServiceServer) Max(stream calc.CalculatorService_MaxServer)
 	}
 
 	return nil
+}
+
+func (s *MyCalculatorServiceServer) Sqr(ctx context.Context, req *calc.SqrRequest) (*calc.SqrResponse, error) {
+	log.Printf("Sqr function was invoked\n")
+
+	if req.Number < 0 {
+		return nil, status.Errorf(
+			codes.InvalidArgument,
+			fmt.Sprintf("Received negative number: %d\n", req.Number),
+		)
+	}
+
+	return &calc.SqrResponse{
+		Response: math.Sqrt(float64(req.Number)),
+	}, nil
 }
