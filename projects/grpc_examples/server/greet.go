@@ -6,8 +6,11 @@ import (
 	"io"
 	"log"
 	"strings"
+	"time"
 
 	pb "github.com/tomasdepi/golang/projects/grpc_examples/pb/greet"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *MyGreetServiceServer) Greet(ctx context.Context, req *pb.GreetRequest) (*pb.GreetResponse, error) {
@@ -81,4 +84,22 @@ func (s *MyGreetServiceServer) GreetEveryone(stream pb.GreetService_GreetEveryon
 	}
 
 	return nil
+}
+
+func (s *MyGreetServiceServer) GreetWithDeadline(ctx context.Context, req *pb.GreetRequest) (*pb.GreetResponse, error) {
+	log.Printf("GreetWithDeadline function was invoked\n")
+
+	for i := 0; i < 3; i++ {
+		if ctx.Err() == context.DeadlineExceeded {
+			log.Println("The client canceled the request")
+			return nil, status.Error(codes.Canceled, "The client canceled the request")
+		}
+
+		time.Sleep(1 * time.Second)
+
+	}
+
+	return &pb.GreetResponse{
+		Result: "Hello " + req.Name,
+	}, nil
 }

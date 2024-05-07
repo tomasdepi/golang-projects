@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	calc "github.com/tomasdepi/golang/projects/grpc_examples/pb/calculator"
 	pb "github.com/tomasdepi/golang/projects/grpc_examples/pb/greet"
@@ -38,11 +39,13 @@ func main() {
 
 	doAvg(clientcalc, []uint64{1, 2, 3, 4}) // Client Server call
 
-	doGreetEveryone(clientgreet, []string{"Okarin", "Calabacita", "Flaco"})
+	doGreetEveryone(clientgreet, []string{"Okarin", "Calabacita", "Flaco"}) // Bi-lateral Streaming
 
-	doMax(clientcalc, []uint64{1, 5, 3, 6, 2, 20})
+	doMax(clientcalc, []uint64{1, 5, 3, 6, 2, 20}) // Bi-lateral Streaming
 
-	doSqrt(clientcalc, 10)
+	doSqrt(clientcalc, 10) // Error Handling
 
-	doSqrt(clientcalc, -10)
+	doSqrt(clientcalc, -10) // Error Handling
+
+	doGreetWithDeadline(clientgreet, "Depi", 5*time.Second) // Timeout Example
 }

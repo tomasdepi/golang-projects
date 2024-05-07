@@ -7,6 +7,8 @@ import (
 	"time"
 
 	pb "github.com/tomasdepi/golang/projects/grpc_examples/pb/greet"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func doGreet(gsc pb.GreetServiceClient) {
@@ -116,4 +118,34 @@ func doGreetEveryone(gsc pb.GreetServiceClient, names []string) {
 	}()
 
 	<-waitc
+}
+
+func doGreetWithDeadline(gsc pb.GreetServiceClient, name string, timeout time.Duration) {
+	log.Println("doGreetWithDeadline was invoked")
+
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	req := &pb.GreetRequest{
+		Name: name,
+	}
+
+	res, err := gsc.GreetWithDeadline(ctx, req)
+
+	if err != nil {
+		e, ok := status.FromError(err)
+		if e.Code() == codes.DeadlineExceeded {
+			log.Println("Deadline Exceeded")
+			return
+		} else {
+			log.Panicf("Unexpected gRPC error: %v\n", err)
+		}
+		if ok {
+
+		} else {
+			log.Fatalf("A non gRCP error: %v\n", err)
+		}
+	}
+
+	log.Printf("GreetWithDeadline: %s\n", res.Result)
 }
