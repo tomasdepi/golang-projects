@@ -7,6 +7,7 @@ import (
 	calc "github.com/tomasdepi/golang/projects/grpc_examples/pb/calculator"
 	pb "github.com/tomasdepi/golang/projects/grpc_examples/pb/greet"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 var addr string = "0.0.0.0:50001"
@@ -29,7 +30,22 @@ func main() {
 
 	log.Printf("Listening at %s\n", addr)
 
-	s := grpc.NewServer()
+	tls := true
+	opts := []grpc.ServerOption{}
+
+	if tls {
+		certFile := "ssl/server.crt"
+		keyFile := "ssl/server.pem"
+		creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
+
+		if err != nil {
+			log.Fatalf("Failed to load certificates %s\n", err)
+		}
+
+		opts = append(opts, grpc.Creds(creds))
+	}
+
+	s := grpc.NewServer(opts...)
 
 	greetService := &MyGreetServiceServer{}
 	calcService := &MyCalculatorServiceServer{}

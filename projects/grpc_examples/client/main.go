@@ -7,13 +7,32 @@ import (
 	calc "github.com/tomasdepi/golang/projects/grpc_examples/pb/calculator"
 	pb "github.com/tomasdepi/golang/projects/grpc_examples/pb/greet"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 var serverEndpoint string = "localhost:50001"
 
 func main() {
-	conn, err := grpc.Dial(serverEndpoint, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	tls := true
+	opts := []grpc.DialOption{}
+
+	if tls {
+		certFile := "ssl/ca.crt"
+		// keyFile := "ssl/server.key"
+
+		creds, err := credentials.NewClientTLSFromFile(certFile, "")
+
+		if err != nil {
+			log.Fatalf("Failed to load creds: %s\n", err)
+		}
+
+		opts = append(opts, grpc.WithTransportCredentials(creds))
+	} else {
+		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	}
+
+	conn, err := grpc.Dial(serverEndpoint, opts...)
 
 	if err != nil {
 		log.Fatalf("Unable to Connect %s\n", err)
